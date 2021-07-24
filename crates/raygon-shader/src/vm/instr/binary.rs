@@ -21,15 +21,16 @@ impl BinaryOp {
         let zero = Vf32::<S>::zero();
 
         let res = match self {
-            BinaryOp::Add => a + b,
-            BinaryOp::Sub => a - b,
-            BinaryOp::Mul => a * b,
+            BinaryOp::Add => return a + b,
+            BinaryOp::Sub => return a - b,
+            BinaryOp::Mul => return a * b,
+            BinaryOp::Min => return a.min(b),
+            BinaryOp::Max => return a.max(b),
+            // these require checking for not-normal values
             BinaryOp::Div => a / b,
             BinaryOp::Rem => a % b,
             BinaryOp::Powf => a.powf(b),
             BinaryOp::ArcTan2 => a.atan2(b),
-            BinaryOp::Min => a.min(b),
-            BinaryOp::Max => a.max(b),
             BinaryOp::Hypot => a.hypot(b),
         };
 

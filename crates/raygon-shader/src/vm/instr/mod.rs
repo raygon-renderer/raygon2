@@ -5,10 +5,17 @@ use crate::vm;
 use vm::stack::Stack;
 
 pub mod binary;
+pub mod compare;
+pub mod unary;
 
 pub enum Instruction {
     NoOp,
     ScalarBinary(binary::BinaryOp),
+    ScalarUnary(unary::UnaryOp),
+    ScalarCompare(compare::CompareMode),
+    VectorBinary(binary::BinaryOp),
+    VectorUnary(unary::UnaryOp),
+    VectorCompare(compare::CompareMode),
     VectorSum,
     VectorProduct,
     VectorMin,
@@ -22,7 +29,21 @@ impl Instruction {
     pub fn eval<S: Simd>(self, stack: &mut Stack<S>) {
         match self {
             Instruction::NoOp => {}
-            //Instruction::ScalarBinary(op) => stack.reduce_n(|[a, b]| op.eval::<S>(a, b)),
+
+            Instruction::ScalarUnary(op) => stack.peek_one_mut(|x| *x = op.eval::<S>(*x)),
+            Instruction::ScalarBinary(op) => stack.reduce(|[a, b]| op.eval::<S>(a, b)),
+
+            Instruction::VectorUnary(op) => stack.map(|[x, y, z]| [op.eval::<S>(x), op.eval::<S>(y), op.eval::<S>(z)]),
+            Instruction::VectorBinary(op) => {
+                // map two 3-vectors into one 3-vector, where A is the top-most vector
+                stack.map(|[xb, yb, zb, xa, ya, za]: [Vf32<S>; 6]| [op.eval::<S>(xa, xb), op.eval::<S>(ya, yb), op.eval::<S>(za, zb)]);
+            }
+
+            Instruction::ScalarCompare(mode) => stack.reduce(|[a, b]| mode.compare::<S>(a, b)),
+            Instruction::VectorCompare(mode) => stack.map(|[xb, yb, zb, xa, ya, za]: [Vf32<S>; 6]| {
+                [mode.compare::<S>(xa, xb), mode.compare::<S>(ya, yb), mode.compare::<S>(za, zb)]
+            }),
+
             Instruction::VectorSum => stack.reduce(|[x, y, z]| x + y + z),
             Instruction::VectorProduct => stack.reduce(|[x, y, z]| x * y * z),
             Instruction::VectorMin => stack.reduce(|[x, y, z]| x.min(y).min(z)),
