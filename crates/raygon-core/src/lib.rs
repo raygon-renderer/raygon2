@@ -1,6 +1,8 @@
 #[macro_use]
 pub mod macros;
 
+pub mod slice;
+
 #[inline]
 pub fn upper_bound<F>(size: usize, mut gt: F) -> Option<usize>
 where

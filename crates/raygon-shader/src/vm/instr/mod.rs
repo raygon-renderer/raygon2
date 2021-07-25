@@ -2,12 +2,48 @@ use thermite::*;
 
 use crate::vm;
 
-use vm::stack::Stack;
+use vm::{rom::ROM, stack::Stack};
 
 pub mod binary;
 pub mod compare;
 pub mod unary;
 
+macro_rules! decl_wrappers {
+    ($($name:ident),*) => {
+        $(
+            #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+            #[repr(transparent)]
+            pub struct $name(pub u8);
+
+            impl $name {
+                #[inline]
+                pub fn new(index: usize) -> $name {
+                    debug_assert!(index < 256);
+
+                    $name(index as u8)
+                }
+            }
+
+            impl From<$name> for usize {
+                #[inline(always)]
+                fn from(index: $name) -> usize {
+                    index.0 as usize
+                }
+            }
+
+            impl From<usize> for $name {
+                #[inline]
+                fn from(index: usize) -> $name {
+                    $name::new(index)
+                }
+            }
+        )*
+    }
+}
+
+decl_wrappers!(FloatIndex, VectorIndex, TextureIndex, CurveIndex, ColorModelIndex);
+
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Instruction {
     NoOp,
     ScalarBinary(binary::BinaryOp),
@@ -23,10 +59,11 @@ pub enum Instruction {
     VectorSplat,
     CopyScalar(u8),
     CopyVector(u8),
+    Curve(CurveIndex),
 }
 
 impl Instruction {
-    pub fn eval<S: Simd>(self, stack: &mut Stack<S>) {
+    pub fn eval<S: Simd>(self, stack: &mut Stack<S>, rom: &ROM) {
         match self {
             Instruction::NoOp => {}
 
@@ -74,7 +111,18 @@ impl Instruction {
                     //})
                 })
             }
-            _ => unimplemented!(),
+
+            Instruction::Curve(idx) => stack.peek_one_mut(|x| *x = rom.get_curve(idx).eval::<S>(*x)),
+
+            illegal_instruction => {
+                #[inline(never)]
+                #[cold]
+                pub fn on_illegal_instruction(instruction: Instruction) -> ! {
+                    panic!("Illegal ShaderVM instruction: {:?}", instruction)
+                }
+
+                on_illegal_instruction(illegal_instruction)
+            }
         }
     }
 }
