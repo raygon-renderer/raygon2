@@ -1,0 +1,3 @@
+[submodule "deps/clocksource"]
+	path = deps/clocksource
+	url = https://github.com/raygon-renderer/clocksource

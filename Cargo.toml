@@ -1,7 +1,5 @@
 [workspace]
-members = [
-    "crates/*"
-]
+members = ["crates/*", "deps/*"]
 
 [profile.dev]
 debug = true
