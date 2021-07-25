@@ -1,3 +1,6 @@
 [submodule "deps/clocksource"]
 	path = deps/clocksource
 	url = https://github.com/raygon-renderer/clocksource
+[submodule "deps/deepsize"]
+	path = deps/deepsize
+	url = https://github.com/raygon-renderer/deepsize
