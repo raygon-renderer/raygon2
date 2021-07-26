@@ -110,7 +110,11 @@ impl Display for SplitDuration {
             (false, false, true, true) => write!(f, "{}ms {}ns", self.milliseconds, self.nanoseconds),
             (true, false, true, true) => write!(f, "{}m {}ms {}ns", self.minutes, self.milliseconds, self.nanoseconds),
             (false, true, true, true) => write!(f, "{}s {}ms {}ns", self.seconds, self.milliseconds, self.nanoseconds),
-            (true, true, true, true) => write!(f, "{}m {}s {}ms {}ns", self.minutes, self.seconds, self.milliseconds, self.nanoseconds),
+            (true, true, true, true) => write!(
+                f,
+                "{}m {}s {}ms {}ns",
+                self.minutes, self.seconds, self.milliseconds, self.nanoseconds
+            ),
         }
     }
 }

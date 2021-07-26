@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+    integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+
+<!-- The loading of KaTeX is deferred to speed up page rendering -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"
+    integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+
+<script>
+    function renderKaTexDocs() {
+        let to_do = [];
+        for(let e of document.getElementsByTagName("code")) {
+            if(e.parentElement.tagName == "PRE" && e.classList.contains("language-math")) {
+                to_do.push(function() {
+                    let x = document.createElement('p');
+                    katex.render(e.innerText, x, { displayMode: true, throwOnError: false, trust: true });
+                    e.parentNode.parentNode.replaceChild(x, e.parentNode);
+                });
+            } else if(e.parentElement.nodeType == 1 && e.innerHTML.indexOf('$') != -1) {
+                to_do.push(function() {
+                    let x = document.createElement('span');
+                    x.innerHTML = e.innerHTML;
+                    renderMathInElement(x, {
+                        displayMode: false, throwOnError: false, delimiters: [
+                            { left: "$", right: "$", display: false },
+                        ]
+                    });
+
+                    if(e.innerHTML != x.innerHTML) {
+                        e.replaceWith(x);
+                    }
+                });
+            }
+        }
+
+        for(let f of to_do) f();
+    }
+</script>
+
+<!-- To automatically render math in text elements, include the auto-render extension: -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+    integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous" onload="renderKaTexDocs();"></script>
+
+<style>
+    .katex-display>.katex {
+        text-align: left;
+    }
+
+    .katex .mspace {
+        margin-top: 0.3em;
+    }
+</style>
+
+<style>
+    .flex-container {
+        display: flex;
+        margin-bottom: 1em;
+    }
+
+    .flex-child {
+        flex: 1;
+    }
+
+    .flex-child:first-child {
+        margin-right: 20px;
+    }
+</style>

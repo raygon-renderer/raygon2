@@ -1,0 +1,9 @@
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = "true"
+LLVM_SYS_120_PREFIX = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/deps/llvm-project/build/Release"
+
+[tasks.doc]
+env = { RUSTDOCFLAGS = "--html-in-header ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/katex-header.html" }
+command = "cargo"
+workspace = false
+args = ["doc", "${@}"]
