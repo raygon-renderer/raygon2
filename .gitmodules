@@ -7,3 +7,6 @@
 [submodule "deps/llvm-project"]
 	path = deps/llvm-project
 	url = https://github.com/llvm/llvm-project
+[submodule "deps/inkwell"]
+	path = deps/inkwell
+	url = https://github.com/raygon-renderer/inkwell
