@@ -4,3 +4,6 @@
 [submodule "deps/deepsize"]
 	path = deps/deepsize
 	url = https://github.com/raygon-renderer/deepsize
+[submodule "deps/llvm-project"]
+	path = deps/llvm-project
+	url = https://github.com/llvm/llvm-project
