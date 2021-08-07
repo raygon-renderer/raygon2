@@ -2,7 +2,7 @@ use thermite::*;
 
 use std::ops::*;
 
-use crate::math::*;
+use crate::math::soa::*;
 
 use super::{Matrix4, Vector3};
 

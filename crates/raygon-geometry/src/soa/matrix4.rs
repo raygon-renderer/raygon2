@@ -2,9 +2,9 @@ use std::ops::*;
 
 use thermite::*;
 
-use crate::math::*;
+use crate::math::soa::*;
 
-use crate::{Point3, Vector3};
+use super::{Point3, Vector3};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix4<S: Simd>(pub [[Vf32<S>; 4]; 4]);

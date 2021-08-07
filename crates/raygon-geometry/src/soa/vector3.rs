@@ -2,7 +2,7 @@ use std::ops::*;
 
 use thermite::*;
 
-use crate::math::*;
+use crate::math::soa::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vector3<S: Simd> {
