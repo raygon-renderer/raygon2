@@ -9,18 +9,18 @@ pub mod compare;
 pub mod unary;
 
 macro_rules! decl_wrappers {
-    ($($name:ident),*) => {
+    ($($name:ident: $t:ty),*) => {
         $(
             #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
             #[repr(transparent)]
-            pub struct $name(pub u8);
+            pub struct $name(pub $t);
 
             impl $name {
                 #[inline]
                 pub fn new(index: usize) -> $name {
-                    debug_assert!(index < 256);
+                    debug_assert!(index < (<$t>::MAX as usize));
 
-                    $name(index as u8)
+                    $name(index as $t)
                 }
             }
 
@@ -41,7 +41,12 @@ macro_rules! decl_wrappers {
     }
 }
 
-decl_wrappers!(FloatIndex, VectorIndex, TextureIndex, CurveIndex, ColorModelIndex);
+decl_wrappers! {
+    ScalarIndex: u16,
+    TextureIndex: u16,
+    CurveIndex: u8,
+    ColorModelIndex: u8
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Instruction {
